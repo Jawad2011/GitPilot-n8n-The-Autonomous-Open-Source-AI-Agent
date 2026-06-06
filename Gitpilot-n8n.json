@@ -1,0 +1,569 @@
+{
+  "name": "Gitpilot",
+  "nodes": [
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "events": [
+          "*"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -208
+      ],
+      "id": "github-trigger-node",
+      "name": "Github Trigger",
+      "webhookId": "",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ JSON.stringify($json.body) }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Code & collaboration",
+              "description": "This will be \"Code & Collaboration\" if it is one of the following:\n\n1) push;\n2) pull_request;\n3) pull_request_review;\n4) branch_protection_rule"
+            },
+            {
+              "category": "Project management",
+              "description": "This will be \"Project Management\" if it is one of the following:  \n1) issue;\n2) issue_comment;\n3) milestone;\n4) label"
+            },
+            {
+              "category": "Repository Lifecycle",
+              "description": "This will be \"Repository Life Cycle\" if it is one of the following:  \n1) fork;\n2) repository;\n3) public;\n4) watch"
+            },
+            {
+              "category": "Security & Operations",
+              "description": "This will be \"Security Operations\" if it is one of the following:  \n1) secret_scanning_alert;\n2) dependabot_alert;\n3) workflow_run;\n4) deployment"
+            },
+            {
+              "category": "Else",
+              "description": "If it doesn't fall into any of these, this will be it."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        -208
+      ],
+      "id": "text-classifier-node",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        304,
+        112
+      ],
+      "id": "groq-chat-model-node",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assignment-1",
+              "name": "body.issue.repository_url",
+              "value": "={{ $json.body.issue.repository_url }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment-2",
+              "name": "body.issue.number",
+              "value": "={{ $json.body.issue.number }}",
+              "type": "number"
+            },
+            {
+              "id": "assignment-3",
+              "name": "body.issue.title",
+              "value": "={{ $json.body.issue.title }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment-4",
+              "name": "body.issue.body",
+              "value": "={{ $json.body.issue.body }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment-5",
+              "name": "body.repository.html_url",
+              "value": "={{ $json.body.repository.html_url }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment-6",
+              "name": "body.sender",
+              "value": "={{ $json.body.sender }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        -208
+      ],
+      "id": "edit-fields-node",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "issueNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_Number', `The exact identifier number of the GitHub issue to retrieve details for. Pass this strictly as an integer (e.g., 14). Do not include any text labels or quotation marks.`, 'number') }}"
+      },
+      "type": "n8n-nodes-base.githubTool",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        224
+      ],
+      "id": "get-issue-node",
+      "name": "get_issue",
+      "webhookId": "",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "createComment",
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "issueNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_Number', `The exact number of the target GitHub issue to comment on. Pass this purely as an integer number (e.g., 7). Do not wrap it in quotes, strings, or brackets.`, 'number') }}",
+        "body": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Body', `The exact text content of the comment to post. Use the verbatim message provided by the Main Agent without any modifications, rewriting, or summary.`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.githubTool",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        224
+      ],
+      "id": "create-comment-node",
+      "name": "create_comment",
+      "webhookId": "",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', `The plain-text headline for the new tracking thread. Do not wrap this in any code formatting or JSON syntax.`, 'string') }}",
+        "body": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Body', `The full descriptive context explaining the newly detected issue or bug report. Extract this completely from the Main Agent's instruction text.`, 'string') }}",
+        "labels": [],
+        "assignees": []
+      },
+      "type": "n8n-nodes-base.githubTool",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        224
+      ],
+      "id": "create-issue-node",
+      "name": "create_issue",
+      "webhookId": "",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "issueNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_Number', `The target issue number that needs to be updated. This must be supplied purely as an integer (e.g., 42). Do not include text, markdown symbols, or quotation marks.`, 'number') }}",
+        "editFields": {}
+      },
+      "type": "n8n-nodes-base.githubTool",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        224
+      ],
+      "id": "edit-issue-node",
+      "name": "edit_issue",
+      "webhookId": "",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "lock",
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "issueNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Issue_Number', `The unique identification number of the issue thread to lock down. Input this solely as a raw integer value (e.g., 105).`, 'number') }}"
+      },
+      "type": "n8n-nodes-base.githubTool",
+      "typeVersion": 1.1,
+      "position": [
+        1456,
+        224
+      ],
+      "id": "lock-issue-node",
+      "name": "lock_issue",
+      "webhookId": "",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        816,
+        224
+      ],
+      "id": "groq-chat-model2-node",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "An automated GitHub execution sub-agent that interacts with your repository. To use this tool, pass a clear, plain-text instruction explaining what task to perform on the repository (such as fetching an issue or adding a comment). Specify the issue number and the exact message body text clearly within your instruction. Do not write JSON code blocks.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "You are the Github Orchestrator AI Agent Tool. Your sole responsibility is to fulfill specific repository execution tasks sent to you by the supervising Main Agent.\n\n---\n\n## YOUR ROLE\n\nYou receive plain-text operational commands from the Main Agent. Your job is to read their sentences, isolate the target issue numbers and text parameters, and call your attached native GitHub nodes flawlessly.\n\n---\n\n## ATTACHED NATIVE TOOLS\n\nYou have direct access to five native GitHub tools. Match the Main Agent's request to the correct tool:\n- `get_issue` — Use when asked to fetch or check issue data.\n- `create_comment` — Use when asked to post an acknowledgment or follow-up reply.\n- `create_issue` — Use when explicitly asked to open a new tracking thread.\n- `edit_issue` — Use ONLY if explicitly instructed by a human or a highly specific override request.\n- `lock_issue` — Use ONLY if explicitly instructed by a human.\n\n---\n\n## RULES OF EXECUTION\n\n1. **Verbatim Text Injection:** When the Main Agent specifies text inside quotes or instructs you to use an exact message block, extract that text cleanly and pass it directly into the tool parameter. Do not rewrite, summarize, or edit their messaging words.\n2. **Strict Variable Isolation:** Identify the target issue number from phrases like \"issue number [X]\" and cleanly assign it to the tool execution block.\n3. **Keep-Silent Confirmation:** Once a tool successfully completes its action, return a brief, professional text confirmation back to the Main Agent (e.g., \"Successfully posted comment to issue #7.\")."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        1056,
+        16
+      ],
+      "id": "github-orchestrator-node",
+      "name": "Github Orchestrator AI Agent Tool"
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        16
+      ],
+      "id": "dev-notifier-node",
+      "name": "Dev Notifier",
+      "webhookId": "",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "systemMessage": "You are a GitHub Issue Monitoring Agent — an always-on assistant that monitors, analyzes, and reports GitHub issues for a repository 24/7.\n\n## YOUR ROLE\n\nYou are a monitor and coordinator — NOT a direct code execution layer. You bridge GitHub webhook triggers and the dev team by:\n1. **Analyzing** incoming issues (title + description) from the preceding nodes.\n2. **Reporting** formatted summaries to the team via the Telegram tool.\n3. **Delegating** GitHub responses directly to your sub-agent tool.\n\n## DELEGATION PROTOCOL (TALKING TO YOUR SUB-AGENT)\n\nYou have access to a tool named \"Github Orchestrator AI Agent Tool\". This is a specialized worker agent that handles repository actions. \n\nWhen you need to interact with GitHub, call this tool and speak to it in clear, plain-text instructions. Tell it exactly what action to take and pass the necessary variables conversationally. Do not write JSON code blocks. Use these exact structural formats:\n\n- **To fetch an issue:** \"Please use get_issue for issue number [number].\"\n- **To post an acknowledgment:** \"Please use create_comment for issue number [number]. The comment text must be exactly: [insert message text]\"\n- **To open a new tracking thread:** \"Please use create_issue. Title: [insert title]. Body: [insert description]\"\n\n## WORKFLOW\n\n### New Issue or Comment Detected → Follow these steps in order:\n\n**Step 1 — Analyze**\nRead the incoming issue data. Determine its Type (Bug / Feature / Question) and Priority (High / Medium / Low).\n\n**Step 2 — Telegram Report**\nSend this message format to the team using your Telegram Tool first:\n\ud83d\udd14 New GitHub Issue Detected\n\ud83d\udccd Issue #[number]: [Title]\n\ud83c\udff7\ufe0f Type: [type]\n\u26a0\ufe0f Priority: [High / Medium / Low]\n\ud83d\udccb Summary:\n[2\u20134 sentences explaining the issue in plain English]\n\ud83d\udd17 Link: [issue URL]\n\n**Step 3 — Handle GitHub Feedback**\nImmediately after the Telegram alert, call the \"Github Orchestrator AI Agent Tool\" using the plain-text delegation protocol:\n- **For a Brand New Issue:** Tell it to use `create_comment` for that issue number with this exact text:\n \u00a0\"\ud83d\udc4b Hi @[author], thanks for reporting this! Our team has been notified and a developer will look into this shortly. Feel free to add any extra details that might help us investigate.\"\n- **For a New Comment on an Existing Issue:** Tell it to use `create_comment` for that issue number with this exact text:\n \u00a0\"\ud83d\udc68\u200d\ud83d\udcbb Thanks for the update! Our developers are actively working on this and it will be fixed soon. We appreciate your patience and will post an update once there is progress.\"\n\n## GENERAL CONSTRAINTS\n- Always fire the Telegram report before calling the Github Orchestrator tool.\n- Be professional, concise, and neutral. Never promise timelines."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        864,
+        -208
+      ],
+      "id": "github-issue-monitoring-agent-node",
+      "name": "Github Issue Monitoring AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        800,
+        16
+      ],
+      "id": "groq-chat-model1-node",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Github Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Github Issue Monitoring AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_issue": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Orchestrator AI Agent Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_comment": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Orchestrator AI Agent Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_issue": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Orchestrator AI Agent Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "edit_issue": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Orchestrator AI Agent Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lock_issue": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Orchestrator AI Agent Tool",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Github Orchestrator AI Agent Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Github Orchestrator AI Agent Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Issue Monitoring AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dev Notifier": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github Issue Monitoring AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Github Issue Monitoring AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  },
+  "id": "",
+  "tags": []
+}
