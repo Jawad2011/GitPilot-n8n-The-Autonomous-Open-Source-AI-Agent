@@ -1,0 +1,1 @@
+An automated GitHub execution sub-agent that interacts with your repository. To use this tool, pass a clear, plain-text instruction explaining what task to perform on the repository (such as fetching an issue or adding a comment). Specify the issue number and the exact message body text clearly within your instruction. Do not write JSON code blocks.
