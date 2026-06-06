@@ -1,7 +1,9 @@
 # GitPilot-n8n-The-Autonomous-Open-Source-AI-Agent
 A multi-agentic workflow that automatically tracks and updates its developers in a GitHub repository.
 
-<img width="1727" height="622" alt="Screenshot 2026-06-06 194246" src="https://github.com/user-attachments/assets/bed908c1-125f-4975-a45c-965f5696cb40" />
+<img width="1317" height="482" alt="Screenshot 2026-06-06 204759" src="https://github.com/user-attachments/assets/eb4b718c-1a7f-4bc9-97d9-38b8b9a94dca" />
+
+
 
 ## See how it works:
 https://github.com/user-attachments/assets/1392c6e8-91e6-40c3-829a-4a8ca6fa626c
