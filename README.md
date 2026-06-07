@@ -11,9 +11,13 @@ https://github.com/user-attachments/assets/1392c6e8-91e6-40c3-829a-4a8ca6fa626c
 ### If you want to watch it on YouTube, check out this link:
 https://youtu.be/wF0slbjWj3U?si=MRvZD8EYqhjJQhjd
 
-## 👀What is in the video:
+## 👀 What is in the video:
 
-### This video shows how it wokrs and the exact process How the workflow works.
+### This video shows how it works and the exact process How the workflow works.
+
+## 🚀 How to try it yourself:
+
+### Create an issue here: https://github.com/Jawad2011/Gitpilot-test-sandbox/issues . Then wait a few moments, and an automated response will appear in the issue comment. It also sends a notification to its developers using the Telegram channel. If you also want to see the notification sent to the developers, check out this Telegram Channel: https://t.me/developers_io . You will see that your issue has been notified to the developers in the channel.
 
 
 ## ✨ Its features:
@@ -31,11 +35,7 @@ https://youtu.be/wF0slbjWj3U?si=MRvZD8EYqhjJQhjd
 <a href="https://github.com/n8n-io/n8n">
   <img src="https://cdn.simpleicons.org/n8n/%23FF6C37" width="220" height="90" alt="n8n" />
 </a>
-
-
-## 🚫☁️ Why is there no demoable link:
-
-### n8n is a locally run AI Automation tool. It saves its credentials directly on the servers that you are hosting on. If I want to make it demoable, I will expose my credentials, which carries a significant risk. 
+ 
 
 ## ▶️⚙️ How to run it yourself:
 
